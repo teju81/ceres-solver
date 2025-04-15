@@ -170,8 +170,8 @@ if (EXISTS "${Ceres_SOURCE_DIR}/third_party/abseil-cpp/CMakeLists.txt")
   set(CERES_USE_SYSTEM_ NO)
 else()
   message("-- ceres-solver/third_party/abseil-cpp is empty, so falling back to system installed abseil")
-  find_package( REQUIRED)
-  message("-- Found abseil version ${_VERSION}: ${_DIR}")
+  find_package(absl REQUIRED)
+  message("-- Found abseil version ${absl_VERSION}: ${absl_DIR}")
   if (NOT absl_VERSION)
     # In some installs, abseil will not export the version number, in
     # which case we check for vlog_is_on, which is a feature we need
