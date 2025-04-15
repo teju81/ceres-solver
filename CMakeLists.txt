@@ -137,24 +137,24 @@ if (EXISTS "${Ceres_SOURCE_DIR}/third_party/abseil-cpp/CMakeLists.txt")
   unset(project_calls)
   unset(project_call)
   unset(version_param)
-  if (NOT absl_VERSION)
+  if (NOT _VERSION)
     message("-- Using the version of abseil in ceres-solver/third_party/abseil-cpp")
   endif()
 
   # In the normal course of things, we would not need the following constraint.
   # However, if we do not set the standard, then std::basic_string_view is not
-  # available, which absl depends on and linking the test fails.
+  # available, which  depends on and linking the test fails.
   set(CMAKE_CXX_STANDARD 17)
   # Abseil does not handle symbol visibility correctly. As a workaround, we let it
   # expose all the symbols to avoid linker errors.
   set(CMAKE_CXX_VISIBILITY_PRESET default)
-  # ABSL plans to enable this flag to be on by default in the future. If it is not
+  #  plans to enable this flag to be on by default in the future. If it is not
   # set, then it issues a warning. We force enable it, both to silence the warning
   # but to also be safe going forward.
 
-  option(ABSL_PROPAGATE_CXX_STD "Use CMake C++ standard meta features
+  option(_PROPAGATE_CXX_STD "Use CMake C++ standard meta features
   (e.g. cxx_std_14) that propagate to targets that link to Abseil" ON)
-  option(ABSL_ENABLE_INSTALL "Enable install rules" ON)
+  option(_ENABLE_INSTALL "Enable install rules" ON)
 
   add_subdirectory(third_party/abseil-cpp)
 
@@ -167,11 +167,11 @@ if (EXISTS "${Ceres_SOURCE_DIR}/third_party/abseil-cpp/CMakeLists.txt")
   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
-  set(CERES_USE_SYSTEM_ABSL NO)
+  set(CERES_USE_SYSTEM_ NO)
 else()
   message("-- ceres-solver/third_party/abseil-cpp is empty, so falling back to system installed abseil")
-  find_package(absl REQUIRED)
-  message("-- Found abseil version ${absl_VERSION}: ${absl_DIR}")
+  find_package( REQUIRED)
+  message("-- Found abseil version ${_VERSION}: ${_DIR}")
   if (NOT absl_VERSION)
     # In some installs, abseil will not export the version number, in
     # which case we check for vlog_is_on, which is a feature we need
@@ -183,10 +183,7 @@ else()
   set(CERES_USE_SYSTEM_ABSL YES)
 endif()
 if (NOT absl_VERSION)
-  if (EXPORT_BUILD_DIR)
-    message(FATAL_ERROR "Cannot generate CeresConfig.cmake due to missing Abseil version. Using resulting package configuration will likely result in integration errors. Set absl_VERSION manually to disable this error message")
-  endif()
-  install (CODE [=[message (FATAL_ERROR "Cannot generate CeresConfig.cmake due to missing Abseil version. Using resulting package configuration will likely result in integration errors. Set absl_VERSION manually to disable this error message.")]=])
+  message(WARNING "Abseil version is missing. Proceeding anyway. This may cause issues if CeresConfig is used by other CMake projects.")
 endif()
 
 # Google Test
